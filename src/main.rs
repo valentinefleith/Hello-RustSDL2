@@ -10,7 +10,25 @@ use std::time::Duration;
 
 const DOT_SIZE_IN_PXS: u32 = 20;
 
+pub enum State {
+    Running,
+    Paused,
+}
 pub struct Point(pub i32, pub i32);
+
+pub struct Context {
+    pub food: Point,
+    pub state: State,
+}
+
+impl Context {
+    pub fn new() -> Context {
+        Context {
+            food: Point(3, 3),
+            state: State::Paused,
+        }
+    }
+}
 
 pub struct Renderer {
     canvas: WindowCanvas,
@@ -33,17 +51,26 @@ impl Renderer {
         Ok(())
     }
 
-    pub fn draw(&mut self) -> Result<(), String> {
-        self.canvas.set_draw_color(Color::BLACK);
-        self.canvas.clear();
-
-        self.canvas.set_draw_color(Color::GREEN);
-        self.draw_dot(&Point(3, 1))?;
-        self.draw_dot(&Point(2, 1))?;
-        self.draw_dot(&Point(1, 1))?;
-
+    pub fn draw(&mut self, context: &Context) -> Result<(), String> {
+        self.draw_background(context);
+        self.draw_food(context)?;
         self.canvas.present();
 
+        Ok(())
+    }
+
+    fn draw_background(&mut self, context: &Context) {
+        let color = match context.state {
+            State::Paused => Color::RGB(30, 30, 30),
+            State::Running => Color::RGB(0, 0, 0),
+        };
+        self.canvas.set_draw_color(color);
+        self.canvas.clear();
+    }
+
+    fn draw_food(&mut self, context: &Context) -> Result<(), String> {
+        self.canvas.set_draw_color(Color::RED);
+        self.draw_dot(&context.food)?;
         Ok(())
     }
 }
@@ -59,12 +86,12 @@ fn main() -> Result<(), String> {
         .map_err(|e| e.to_string())?;
 
     let mut renderer = Renderer::new(window)?;
-
+    let mut context = Context::new();
     let mut event_pump = sdl_context.event_pump()?;
     let mut i = 0;
     'running: loop {
         i = (i + 1) % 255;
-        renderer.draw()?;
+        renderer.draw(&context)?;
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -78,7 +105,7 @@ fn main() -> Result<(), String> {
                 _ => {}
             }
         }
-        ::std::thread::sleep(Duration::new(1, 1_000_000_000u32 / 60));
+        ::std::thread::sleep(Duration::new(1, 1_000_000_000u32 / 30));
     }
     Ok(())
 }
