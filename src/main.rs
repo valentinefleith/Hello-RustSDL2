@@ -1,35 +1,10 @@
 extern crate sdl2;
 
-mod renderer;
-
-use renderer::Renderer;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::video::Window;
 use std::time::Duration;
-
-const DOT_SIZE_IN_PXS: u32 = 20;
-
-pub enum State {
-    Running,
-    Paused,
-}
-
-pub struct Point(pub i32, pub i32);
-
-pub struct Context {
-    pub food: Point,
-    pub state: State,
-}
-
-impl Context {
-    pub fn new() -> Context {
-        Context {
-            food: Point(3, 3),
-            state: State::Paused,
-        }
-    }
-}
+use Hello_RustSDL2::context::Context;
+use Hello_RustSDL2::renderer::Renderer;
 
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init().unwrap();

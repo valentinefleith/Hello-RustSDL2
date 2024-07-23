@@ -1,8 +1,10 @@
-use crate::{Context, Point, State, DOT_SIZE_IN_PXS};
+use crate::context::{Context, Point, State};
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::WindowCanvas;
 use sdl2::video::Window;
+
+pub const DOT_SIZE_IN_PXS: u32 = 20;
 
 pub struct Renderer {
     canvas: WindowCanvas,
