@@ -1,4 +1,5 @@
 use crate::context::Context;
+use crate::context::State;
 use crate::renderer::Renderer;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -46,11 +47,29 @@ impl GraphicWindow {
                         keycode: Some(Keycode::Escape),
                         ..
                     } => break 'running,
-                    _ => {}
+                    _ => self.event_handler(event),
                 }
             }
-            ::std::thread::sleep(Duration::new(1, 1_000_000_000u32 / 30));
+            ::std::thread::sleep(Duration::new(1, 1_000_000_000u32 / 60));
         }
         Ok(())
+    }
+
+    pub fn event_handler(&mut self, event: Event) {
+        match event {
+            Event::KeyDown {
+                keycode: Some(keycode),
+                ..
+            } => match keycode {
+                Keycode::Space => {
+                    self.context.state = match self.context.state {
+                        State::Running => State::Paused,
+                        State::Paused => State::Running,
+                    }
+                }
+                _ => {}
+            },
+            _ => {}
+        }
     }
 }
