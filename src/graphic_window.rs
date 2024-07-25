@@ -3,14 +3,12 @@ use crate::context::State;
 use crate::renderer::Renderer;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::render::WindowCanvas;
 use sdl2::Sdl;
-use sdl2::VideoSubsystem;
 use std::time::Duration;
 
 pub struct GraphicWindow {
     sdl_context: Sdl,
-    video_subsystem: VideoSubsystem,
+    //video_subsystem: VideoSubsystem,
     renderer: Renderer,
     context: Context,
 }
@@ -26,11 +24,10 @@ impl GraphicWindow {
             .build()
             .map_err(|e| e.to_string())?;
 
-        let mut renderer = Renderer::new(window)?;
-        let mut context = Context::new();
+        let renderer = Renderer::new(window)?;
+        let context = Context::new();
         Ok(GraphicWindow {
             sdl_context,
-            video_subsystem,
             renderer,
             context,
         })
